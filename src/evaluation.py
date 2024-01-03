@@ -3,6 +3,7 @@ from pathlib import Path
 import polars as pl
 import torch
 from logzero import logger
+from sentence_transformers import SentenceTransformer
 from sentence_transformers.evaluation import ParaphraseMiningEvaluator
 from torch import Tensor
 from train import load_dataset_for_paraphrase_mining_evaluator, load_model
@@ -10,6 +11,7 @@ from train import load_dataset_for_paraphrase_mining_evaluator, load_model
 ROOT_DIRPATH = Path(__file__).resolve().parent
 VALID_INPUT_FILEPATH = ROOT_DIRPATH / "../data/interium/jsnli_1.1/dev.tsv"
 PRECOMPUTED_EMBEDDING_FILEPATH = ROOT_DIRPATH / "../data/interium/openai/jsnli_1.1_dev_with_embedding.parquet"
+S_BERT_MODELPATH = ROOT_DIRPATH / "../data/processed/cl-tohoku_bert-base-japanese-v3"
 OUTPUT_DIRPATH = ROOT_DIRPATH / "../data/processed/evaluation"
 
 MODEL_NAME = "cl-tohoku/bert-base-japanese-v3"
@@ -83,6 +85,13 @@ def main() -> None:
     dev_evaluator = ParaphraseMiningEvaluator(sentences_map, duplicates_list, name=name)
     pretrained_model = load_model(model_name=MODEL_NAME, pooling_mode=POOLING_MODE)
     ap = dev_evaluator(model=pretrained_model, output_path=OUTPUT_DIRPATH)
+    logger.info(f"{name} average precision: {ap}")
+
+    # 学習したsentence bertの評価
+    name = "s_bert"
+    dev_evaluator = ParaphraseMiningEvaluator(sentences_map, duplicates_list, name=name)
+    s_bert_model = SentenceTransformer(S_BERT_MODELPATH)
+    ap = dev_evaluator(model=s_bert_model, output_path=OUTPUT_DIRPATH)
     logger.info(f"{name} average precision: {ap}")
 
 

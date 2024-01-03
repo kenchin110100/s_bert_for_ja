@@ -32,10 +32,24 @@ https://www.sbert.net/docs/package_reference/evaluation.html#sentence_transforme
 - pretrained ci-tohoku/bert-base-japanese-v3
 - openai ada v2 embedding
 
-
 ## 分析結果
+
+### Average Precision
+
+|model|average precision|
+|-:|:-|
+|openai_ada_v2|0.043452|
+|pretrained (cl-tohoku/bert-base-japanese-v3)|0.010030|
+|trained (from cl-tohoku/bert-base-japanese-v3)|0.170044|
+
+※ trainedのモデルは評価データでearly stoppingしたのでやや過大評価気味
+
+### 学習中の評価データでのAverage Precisionの推移
+
+![学習中のAverage Precisionの推移](./reports/figures/ap_per_steps.png)
 
 ## 参考資料
 
-https://www.ogis-ri.co.jp/otc/hiroba/technical/similar-document-search/part18.html#fn7
+- https://www.ogis-ri.co.jp/otc/hiroba/technical/similar-document-search/part18.html
+- https://github.com/UKPLab/sentence-transformers/blob/master/examples/training/nli/training_nli_v2.py
 
